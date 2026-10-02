@@ -1,0 +1,125 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User profile with plan, credits, and role",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 200 },
+        "photoURL": { "type": "string", "maxLength": 500 },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "plan": { "type": "string", "enum": ["free", "creator", "pro", "business"] },
+        "credits": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId", "email", "role", "plan", "credits"]
+    },
+    "Project": {
+      "title": "Project",
+      "description": "User creative project container",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 150 },
+        "type": { "type": "string", "enum": ["video", "image", "thumbnail", "script", "voiceover", "advertisement", "social_media", "branding"] },
+        "description": { "type": "string", "maxLength": 1000 },
+        "status": { "type": "string", "enum": ["draft", "in_progress", "completed", "archived"] },
+        "thumbnail": { "type": "string", "maxLength": 1000 },
+        "isPublic": { "type": "boolean" },
+        "shareSlug": { "type": "string", "maxLength": 128 },
+        "tags": { "type": "array", "items": { "type": "string", "maxLength": 50 } },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId", "name", "type", "status"]
+    },
+    "Generation": {
+      "title": "Generation Item",
+      "description": "AI generated creative asset record",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "projectId": { "type": "string", "maxLength": 128 },
+        "toolType": { "type": "string", "enum": ["image", "script", "thumbnail", "voice", "video", "ad", "social_media"] },
+        "prompt": { "type": "string", "maxLength": 2000 },
+        "settings": { "type": "object" },
+        "result": { "type": "object" },
+        "status": { "type": "string", "enum": ["generating", "completed", "failed"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "toolType", "prompt", "status"]
+    },
+    "PortfolioItem": {
+      "title": "Portfolio Item",
+      "description": "Showcase project for the public portfolio and admin management",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 150 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "category": { "type": "string", "enum": ["videos", "thumbnails", "images", "advertisements", "social_media", "branding"] },
+        "mediaUrl": { "type": "string", "maxLength": 1000 },
+        "mediaType": { "type": "string", "enum": ["image", "video"] },
+        "featured": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["title", "description", "category", "mediaUrl"]
+    },
+    "Order": {
+      "title": "Order / Package Purchase",
+      "description": "Plan or credits package purchase records",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "plan": { "type": "string", "maxLength": 50 },
+        "amount": { "type": "number" },
+        "credits": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "completed", "failed"] },
+        "paymentMethod": { "type": "string", "maxLength": 50 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "plan", "amount", "status"]
+    },
+    "UserSettings": {
+      "title": "User Settings",
+      "description": "User preferences and notifications configuration",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "theme": { "type": "string", "enum": ["dark", "light", "system"] },
+        "emailNotifications": { "type": "boolean" },
+        "generationNotifications": { "type": "boolean" },
+        "autoSave": { "type": "boolean" }
+      },
+      "required": ["userId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User account documents containing profile, roles, plan, and credits"
+    },
+    "/projects/{projectId}": {
+      "schema": { "$ref": "#/entities/Project" },
+      "description": "User creative projects containing metadata, status, and summaries"
+    },
+    "/generations/{generationId}": {
+      "schema": { "$ref": "#/entities/Generation" },
+      "description": "History of generated content created by users"
+    },
+    "/portfolio/{portfolioId}": {
+      "schema": { "$ref": "#/entities/PortfolioItem" },
+      "description": "Public portfolio showcase items managed by admins"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Purchase orders for subscriptions and credit bundles"
+    },
+    "/user_settings/{userId}": {
+      "schema": { "$ref": "#/entities/UserSettings" },
+      "description": "User preferences and system notification toggles"
+    }
+  }
+}
